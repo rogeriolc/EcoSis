@@ -1,0 +1,14 @@
+[29-Aug-2018 15:04:27 UTC] PHP Notice:  Undefined index: username in /home/boeckman/public_html/ecosis/recuperacao-de-senha/index.php on line 120
+[29-Aug-2018 15:04:27 UTC] PHP Notice:  Undefined index: senha in /home/boeckman/public_html/ecosis/recuperacao-de-senha/index.php on line 121
+[29-Aug-2018 15:05:13 UTC] PHP Notice:  Undefined index: username in /home/boeckman/public_html/ecosis/recuperacao-de-senha/index.php on line 120
+[29-Aug-2018 15:05:13 UTC] PHP Notice:  Undefined index: senha in /home/boeckman/public_html/ecosis/recuperacao-de-senha/index.php on line 121
+[29-Aug-2018 16:09:20 UTC] PHP Fatal error:  Class 'cUsuario' not found in /home/boeckman/public_html/ecosis/recuperacao-de-senha/index.php on line 111
+[29-Aug-2018 13:10:07 America/Sao_Paulo] PHP Warning:  include_once(cUsuario.php): failed to open stream: No such file or directory in /home/boeckman/public_html/ecosis/app/conf/autoLoad.php on line 40
+[29-Aug-2018 13:10:07 America/Sao_Paulo] PHP Warning:  include_once(): Failed opening 'cUsuario.php' for inclusion (include_path='.:/opt/alt/php56/usr/share/pear:/opt/alt/php56/usr/share/php') in /home/boeckman/public_html/ecosis/app/conf/autoLoad.php on line 40
+[29-Aug-2018 13:10:07 America/Sao_Paulo] PHP Fatal error:  Class 'cUsuario' not found in /home/boeckman/public_html/ecosis/recuperacao-de-senha/index.php on line 112
+[29-Aug-2018 13:11:24 America/Sao_Paulo] PHP Warning:  include_once(cUsuario.php): failed to open stream: No such file or directory in /home/boeckman/public_html/ecosis/app/conf/autoLoad.php on line 40
+[29-Aug-2018 13:11:24 America/Sao_Paulo] PHP Warning:  include_once(): Failed opening 'cUsuario.php' for inclusion (include_path='.:/opt/alt/php56/usr/share/pear:/opt/alt/php56/usr/share/php') in /home/boeckman/public_html/ecosis/app/conf/autoLoad.php on line 40
+[29-Aug-2018 13:11:24 America/Sao_Paulo] PHP Fatal error:  Class 'cUsuario' not found in /home/boeckman/public_html/ecosis/recuperacao-de-senha/index.php on line 112
+[29-Aug-2018 16:13:12 UTC] PHP Fatal error:  Class 'cEmpresa' not found in /home/boeckman/public_html/ecosis/app/model/mPessoa.php on line 3
+[29-Aug-2018 16:14:07 UTC] PHP Fatal error:  Class 'cEmpresa' not found in /home/boeckman/public_html/ecosis/app/model/mPessoa.php on line 3
+[29-Aug-2018 16:14:44 UTC] PHP Fatal error:  Class 'MysqlConexao' not found in /home/boeckman/public_html/ecosis/app/control/cUsuario.php on line 69
