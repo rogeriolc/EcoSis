@@ -1,11 +1,14 @@
 <?php
+
 /**
-* PermissaoSis
-*/
+ * PermissaoSis
+ */
 
-class cPermissao{
+class cPermissao
+{
 
-	public static function validarPermissao($cdPermissao, $alerta = true){
+	public static function validarPermissao($cdPermissao, $alerta = true)
+	{
 
 		$notificacao = new Notificacao;
 
@@ -22,61 +25,49 @@ class cPermissao{
 		$result = $stmt->execute();
 		if ($result) {
 			$num = $stmt->rowCount();
-			if($num > 0){
+			if ($num > 0) {
 				$reg = $stmt->fetch(PDO::FETCH_OBJ);
 
 				$permissaoConcedida = intval($reg->cd_permissao_sis);
-
-			}else{
+			} else {
 				$permissaoConcedida = intval(0);
 			}
-
-		}else{
+		} else {
 			$error = $stmt->errorInfo();
 			$permissaoConcedida = $error[2];
-
 		}
 
 		switch (gettype($permissaoConcedida)) {
 			case 'integer':
 
-			if($permissaoConcedida > 0){
+				if ($permissaoConcedida > 0) {
 
-				return true;
+					return true;
+				} else {
+					$dsMensagemBloqueio = cPermissao::mensagemBloqueio($cdPermissao);
 
-			}else{
-				$dsMensagemBloqueio = cPermissao::mensagemBloqueio($cdPermissao);
+					if ($alerta) {
 
-				if ($alerta){
+						$notificacao->viewSwalNotificacao("Erro!", $dsMensagemBloqueio, "single", "error");
+					}
 
-					$notificacao->viewSwalNotificacao("Erro!", $dsMensagemBloqueio, "single", "error");
+					return false;
+
+					exit();
 				}
 
-				return false;
-
-				exit();
-			}
-
-			break;
+				break;
 
 			default:
 
-			if ($alerta){
+				return false;
 
-				$notificacao->viewSwalNotificacao("Erro!", $validarPermissao, "single", "error");
-
-
-			}
-
-			return false;
-
-			break;
+				break;
 		}
-
-
 	}
 
-	public static function mensagemBloqueio($cdPermissao){
+	public static function mensagemBloqueio($cdPermissao)
+	{
 
 		$mysql = MysqlConexao::getInstance();
 
@@ -88,23 +79,38 @@ class cPermissao{
 		$result = $stmt->execute();
 		if ($result) {
 			$num = $stmt->rowCount();
-			if($num > 0){
+			if ($num > 0) {
 				$reg = $stmt->fetch(PDO::FETCH_OBJ);
 
 				return $reg->ds_mensagem_bloqueio;
-
-			}else{
+			} else {
 				return intval(0);
 			}
-
-		}else{
+		} else {
 			$error = $stmt->errorInfo();
 			return $error[2];
-
 		}
-
 	}
 
-}
+	public static function getUsersByPermissao($cdPermissao)
+	{
 
-?>
+		$mysql = MysqlConexao::getInstance();
+
+		$sql = "SELECT u.cd_usuario, u.nm_usuario, u.email FROM g_permissao_perfil pp, g_permissao_sis p, g_usuario u WHERE pp.cd_permissao_sis = p.cd_permissao_sis AND u.cd_perfil_usuario = pp.cd_perfil_usuario AND p.cd_permissao_sis = :cdPermissao AND u.cd_usuario = 1";
+		$stmt = $mysql->prepare($sql);
+		$stmt->bindParam(":cdPermissao", $cdPermissao);
+		$result = $stmt->execute();
+		if ($result) {
+			$num = $stmt->rowCount();
+			if ($num > 0) {
+				return $stmt->fetchAll(PDO::FETCH_OBJ);
+			} else {
+				return false;
+			}
+		} else {
+			$error = $stmt->errorInfo();
+			return $error[2];
+		}
+	}
+}

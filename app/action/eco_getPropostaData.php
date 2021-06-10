@@ -26,6 +26,7 @@ $proposta->dt_prev_entrega = $dadosProposta[0]->dt_prev_conclusao;
 $proposta->ds_observacao = $dadosProposta[0]->ds_observacao;
 $proposta->vl_proposta = '';
 $proposta->fechar = false;
+$proposta->able_to_close = ($dadosProposta[0]->total_aprovado === $dadosProposta[0]->total_clientes);
 
 switch ($dadosProposta[0]->tp_status) {
     case 'F':

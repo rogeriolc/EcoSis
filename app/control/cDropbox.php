@@ -7,11 +7,13 @@ class cDropbox
     private $token = 'RNbi5tjKZ_UAAAAAAAAAAUNfOzdswXaB1f1fDrNTxyc2SPdM4lvofgFqOuKlkx9H'; //oauth token
     private $path = '/uploads';
 
-    public function upload($file)
+    public function upload($file, $folder = null)
     {
         $basePath = $this->path;
 
         $filename = basename($file['name']);
+
+        $path = (!is_null($folder)) ? $basePath .'/' . $folder . '/' . basename($filename) : $basePath . '/' . basename($filename);
 
         $headers = array(
             'Authorization: Bearer ' . $this->token,
@@ -19,7 +21,7 @@ class cDropbox
             'Dropbox-API-Arg: ' .
                 json_encode(
                     array(
-                        "path" => $basePath . '/' . basename($filename),
+                        "path" => $path,
                         "mode" => "add",
                         "autorename" => true,
                         "mute" => false

@@ -83,13 +83,19 @@ class Notificacao{
 		// Define os dados do servidor e tipo de conex�o
 		// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 		$mail->IsSMTP(); // Define que a mensagem ser� SMTP
-		$mail->Host = "smtp.calango.eng.br"; // Endere�o do servidor SMTP
+		//$mail->Host = "smtp.calango.eng.br"; // Endere�o do servidor SMTP
 
 		// if(!is_null($user) && !is_null($pass)){
 
-		$mail->SMTPAuth = true; // Usa autentica��o SMTP? (opcional)
-		$mail->Username = 'ecosis@calango.eng.br'; // Usu�rio do servidor SMTP
-		$mail->Password = 'Calango@2019'; // Senha do servidor SMTP
+		//$mail->SMTPAuth = true; // Usa autentica��o SMTP? (opcional)
+		//$mail->Username = 'ecosis@calango.eng.br'; // Usu�rio do servidor SMTP
+		//$mail->Password = 'Calango@2019'; // Senha do servidor SMTP
+
+
+		$mail->Host = "smtp.mailtrap.io";
+		$mail->SMTPAuth = true;
+		$mail->Username = '3d1828cc711232';
+		$mail->Password = 'd8b53a8fe5bb04';
 
 		// }
 

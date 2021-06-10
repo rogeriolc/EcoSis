@@ -35,7 +35,10 @@ if (empty($dsComentario)) {
 
 				// $anexo = new Anexo($dsAnexo, $dsCaminho);
 
-				$dropBoxUpload = $dropbox->upload($dsAnexo);
+				$servico = cServico::getServicoByAtividadeFase($cdAtividadeFase);
+				$folder  = trim($servico->nm_cliente)."/".trim($servico->nm_empreendimento)."/Proposta - $servico->nr_protocolo.$servico->competencia";
+
+				$dropBoxUpload = $dropbox->upload($dsAnexo, $folder);
 
 				// $response = $anexo->getMessage();
 

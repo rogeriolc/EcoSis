@@ -416,8 +416,6 @@ class cProposta extends mPropostaLicencaAmb
     {
         $mysql = MysqlConexao::getInstance();
 
-        $cdEmpresa = $_SESSION['cdEmpresa'];
-
         $sql = "
         SELECT 	pc.cd_proposta_cliente,
                 pc.cd_proposta_cliente_pai,
@@ -427,6 +425,9 @@ class cProposta extends mPropostaLicencaAmb
                 c.nm_cliente,
                 pa.valor,
                 pa.dt_prev_entrega,
+                pc.sn_aprovado,
+                pc.dh_aprovado,
+                (SELECT s.cd_servico FROM eco_servico s WHERE s.cd_proposta_cliente = pc.cd_proposta_cliente) as cd_servico,
                 CASE ta.cd_cat_tp_atividade WHEN 1 THEN 'A' WHEN 2 THEN 'C' ELSE NULL END AS tp_atividade,
                 0 as total
         FROM 	eco_proposta_cliente pc,

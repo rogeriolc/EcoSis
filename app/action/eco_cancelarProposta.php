@@ -14,29 +14,17 @@ if (is_null($cdProposta)) {
 	exit();
 }
 
-$proposta 				= new cPropostaLicencaAmb($cdProposta);
-$dadosProposta			= $proposta->Dados();
+$proposta 				= new cProposta($cdProposta);
+$dadosProposta			= $proposta->getData($cdProposta);
 
-$propostaCancelada 		= $proposta->cancelarProposta();
-
-if (!$propostaCancelada) {
-	$notificacao->viewSwalNotificacao("Erro!", "Não foi possivel cancelar a proposta. Contate o administrador do sistema.", "single", "error");
-	exit();
-}
-
-$cdServico				= $proposta->getServico($cdProposta);
-$cdServico				= $cdServico[0]->cd_servico;
-
-if ($cdServico > 0) {
-	$dadosItensProposta		= $proposta->DadosItensProposta();
-
-	$servico 				= new cServico($cdServico);
-	$dadosServico 			= $servico->Dados();
-
-	$servicoCancelado 		= $servico->Suspender();
-
-	$notificacao->viewSwalNotificacao("Sucesso!", "A proposta foi cancelada.", "single", "success");
-} else {
-	$notificacao->viewSwalNotificacao("Erro!", "Não foi possivel cancelar o serviço ligado a proposta. Contate o administrador do sistema.", "error");
-	exit();
+if (count($dadosProposta) > 0) {
+	$propostaCancelada 		= $proposta->cancelarProposta();
+	
+	if (!$propostaCancelada) {
+		$notificacao->viewSwalNotificacao("Erro!", "Não foi possivel cancelar a proposta. Contate o administrador do sistema.", "single", "error");
+		exit();
+	} else {
+		$servicosSuspensos = cProposta::suspenderServicos($cdProposta);
+		$notificacao->viewSwalNotificacao("Sucesso!", "A proposta foi cancelada.", "single", "success");
+	}
 }

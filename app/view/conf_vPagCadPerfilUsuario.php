@@ -85,7 +85,7 @@ $mysql = MysqlConexao::getInstance();
 					<table class="table table-hover table-striped table-condensed dataTable">
 						<thead>
 							<tr>
-								<th>Permissões</th>
+								<th class="text-left">Permissões</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -99,7 +99,7 @@ $mysql = MysqlConexao::getInstance();
 								while ($reg = $stmt->fetch(PDO::FETCH_OBJ)) {
 									echo '
 									<tr>
-									<td>'.$reg->ds_permissao_sis.'</td>
+									<td class="text-right">'.$reg->ds_permissao_sis.'</td>
 									<td>
 									<input type="checkbox" id="checkPermissao'.md5($reg->cd_permissao_sis).'" name="cdPermissao[]" value="'.base64_encode($reg->cd_permissao_sis).'" class="filled-in chk-col-green">
 									<label for="checkPermissao'.md5($reg->cd_permissao_sis).'"></label>
@@ -160,7 +160,7 @@ $mysql = MysqlConexao::getInstance();
 					<table class="table table-hover table-striped table-condensed dataTable">
 						<thead>
 							<tr>
-								<th>Permissões</th>
+								<th class="text-left">Permissões</th>
 								<th></th>
 							</tr>
 						</thead>
@@ -174,7 +174,7 @@ $mysql = MysqlConexao::getInstance();
 								while ($reg = $stmt->fetch(PDO::FETCH_OBJ)) {
 									echo '
 									<tr>
-										<td>'.$reg->ds_permissao_sis.'</td>
+										<td class="text-left">'.$reg->ds_permissao_sis.'</td>
 										<td>
 											<input type="checkbox" id="editCheckPermissao'.md5($reg->cd_permissao_sis).'" name="cdPermissao[]" value="'.base64_encode($reg->cd_permissao_sis).'" class="filled-in  chk-col-green">
 											<label for="editCheckPermissao'.md5($reg->cd_permissao_sis).'"></label>

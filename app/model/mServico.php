@@ -10,6 +10,7 @@ class mServico extends mEmpreendimento{
 	public $cdOrgaoLicenciado;
 	public $dtPrevConclusao;
 	public $tpStatus;
+	public $cdPropostaCliente;
 
 	public function __construct($cdServico=null, $nrProcesso=null, $cdOrgaoLicenciado=null, $dtPrevConclusao=null, $tpStatus=null)
 	{

@@ -435,7 +435,7 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 
 					<div class="p-a-10">
 
-						<table class="table">
+						<table class="table table-striped" id="tableDocumentoServico">
 							<thead>
 								<th style="width: 100px" class="text-center">Recebido</th>
 								<th>Documento</th>
@@ -455,7 +455,7 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 				</div>
 				<div role="tabpanel" class="tab-pane" id="tabDocumentosConsultoria" style="min-height: 800px">
 					<div class="p-a-10">
-						<table class="table table-condensed table-striped">
+						<table class="table table-striped table-hover" id="tableDocumentoConsultoria">
 							<thead>
 								<tr>
 									<th width="50%">Documento</th>
@@ -497,8 +497,6 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 
 									}
 
-								} else {
-									echo '<tr><td colspan="4" class="text-center">Nenhum documento foi publicado</td></tr>';
 								}
 								?>
 							</tbody>
@@ -508,50 +506,56 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 				</div>
 
 				<div role="tabpanel" class="tab-pane" id="tabDocumentosAssessoria" style="min-height: 800px">
-					<br>
-					<div class="row">
-						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							<table class="table table-condensed table-hover">
-								<thead>
-									<tr>
-										<th></th>
-										<th class="text-left">Descrição</th>
-										<th>Data de emissão</th>
-										<th>Data de validade</th>
-									</tr>
-								</thead>
-								<tbody>
-									<?php
-
-									foreach ($produtos as $produto) {
-
-										$dtEmissao = (!is_null($produto->dt_emissao) && !empty($produto->dt_emissao)) ? date("d/m/Y", strtotime($produto->dt_emissao)) : null;
-										$dtValidade = (!is_null($produto->dt_validade) && !empty($produto->dt_validade)) ? date("d/m/Y", strtotime($produto->dt_validade)) : null;
-
-										echo '
+					<div class="p-a-10">
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<table class="table table-hover table-striped" id="tableDocumentoAssessoria">
+									<thead>
 										<tr>
-										<td>
-										<a href="repo/eco/assessoria/'.$produto->cd_it_atividade.'/'.$produto->cd_doc_assessoria.'/'.$produto->ds_anexo.'" target="_blank">
-										<i class="material-icons">insert_drive_file</i>
-										<br>
-										'.$produto->ds_anexo.'
-										</a>
-										</td>
-										<td style="vertical-align: middle !important">
-										'.$produto->ds_documento.'
-										</td>
-										<td style="vertical-align: middle !important">
-										'.$dtEmissao.'
-										</td>
-										<td style="vertical-align: middle !important">
-										'.$dtValidade.'
-										</td>
+											<th>Arquivo</th>
+											<th class="text-left">Descrição</th>
+											<th>Data de emissão</th>
+											<th>Data de validade</th>
 										</tr>
-										';
-									}
-									?>
-								</tbody>
-							</table>
+									</thead>
+									<tbody>
+										<?php
+
+										foreach ($produtos as $produto) {
+
+											$dtEmissao = (!is_null($produto->dt_emissao) && !empty($produto->dt_emissao)) ? date("d/m/Y", strtotime($produto->dt_emissao)) : null;
+											$dtValidade = (!is_null($produto->dt_validade) && !empty($produto->dt_validade)) ? date("d/m/Y", strtotime($produto->dt_validade)) : null;
+
+											$dropbox = new cDropbox();
+											@$fileData = json_decode($produto->file_data);
+											@$fileInfo = $dropbox->get($fileData->id);
+											@$link = $fileInfo->link;
+
+											echo '
+											<tr>
+											<td>
+											<a href="'.$link.'" target="_blank">
+											<i class="material-icons">insert_drive_file</i>
+											<br>
+											'.$produto->ds_anexo.'
+											</a>
+											</td>
+											<td style="vertical-align: middle !important">
+											'.$produto->ds_documento.'
+											</td>
+											<td style="vertical-align: middle !important">
+											'.$dtEmissao.'
+											</td>
+											<td style="vertical-align: middle !important">
+											'.$dtValidade.'
+											</td>
+											</tr>
+											';
+										}
+										?>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -971,6 +975,10 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 
 	var objPosition;
 	var tpStatus 	= '<?php echo $tpStatus;?>';
+
+	$("#tableDocumentoServico").DataTable();
+	$("#tableDocumentoConsultoria").DataTable();
+	$("#tableDocumentoAssessoria").DataTable();
 
 	var tblAssessoria = $("#tableAssessoria").DataTable({
 		"bLengthChange": false,
@@ -1854,7 +1862,7 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 
 	}
 
-	function excluirAnexo(a){
+	function excluirAnexo(file, id){
 
 		swal({
 			title: "Excluir Anexo",
@@ -1882,7 +1890,7 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 				$.ajax({
 					url: 'action/eco_excluirAnexo.php',
 					type: 'POST',
-					data: {dsDir: $(a).data('dir'), cdItAtividade: $(a).data('cod')},
+					data: { file, id },
 					success: function(data){
 						$("#listAnexoAndamento div.row").html(data);
 					},
@@ -2687,7 +2695,11 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 	}
 
 	function openFile(file) {
-		window.open(`${window.location.pathname}action/g_openFile.php?id=${file}`)
+		var dowloadTab = window.open(`${window.location.pathname}action/g_openFile.php?id=${file}`)
+	
+		window.setTimeout(function(){
+			dowloadTab.close();
+		}, 2000);
 	}
 
 </script>

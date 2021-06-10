@@ -625,6 +625,88 @@ class cAtividade extends mAtividade
 		}
 	}
 
+	function renderAnexos() {
+		$mysql = MysqlConexao::getInstance();
+
+		$sql = "SELECT u.nm_usuario, iad.cd_it_atividade_doc, iad.ds_anexo, iad.file_data, iad.dh_registro, iad.cd_usuario_registro FROM `eco_it_atividade_doc` iad, `g_usuario` u WHERE iad.cd_usuario_registro = u.cd_usuario AND iad.cd_it_atividade = :cdItAtividade ORDER BY iad.cd_it_atividade_doc DESC";
+		$stmt = $mysql->prepare($sql);
+		$stmt->bindParam(":cdItAtividade", $this->cdItAtividade);
+		$result = $stmt->execute();
+		
+		if ($result) {
+			$num = $stmt->rowCount();
+			if($num > 0){
+				while ($reg = $stmt->fetch(PDO::FETCH_OBJ)) {
+					$ext = pathinfo($reg->ds_anexo, PATHINFO_EXTENSION);
+
+					switch ($ext) {
+						case 'pdf':
+						$dsIcon  = '<i class="material-icons">picture_as_pdf</i>';
+						$colIcon = 'bg-deep-purple';
+						break;
+
+						case 'doc':
+						$dsIcon  = '<i class="material-icons">description</i>';
+						$colIcon = 'bg-deep-purple';
+						break;
+
+						case 'docx':
+						$dsIcon  = '<i class="material-icons">description</i>';
+						$colIcon = 'bg-deep-purple';
+						break;
+
+						case 'jpg':
+						$dsIcon  = '<i class="material-icons">photo</i>';
+						$colIcon = 'bg-deep-purple';
+						break;
+
+						case 'png':
+						$dsIcon  = '<i class="material-icons">photo</i>';
+						$colIcon = 'bg-deep-purple';
+						break;
+
+						case 'gif':
+						$dsIcon  = '<i class="material-icons">photo</i>';
+						$colIcon = 'bg-deep-purple';
+						break;
+
+						case 'jpeg':
+						$dsIcon  = '<i class="material-icons">photo</i>';
+						$colIcon = 'bg-deep-purple';
+						break;
+
+						default:
+						$dsIcon  = '<i class="material-icons">insert_drive_file</i>';
+						$colIcon = 'bg-deep-purple';
+						break;
+					}
+
+					$file = json_decode($reg->file_data, true);
+					$fileId = ($file['id']) ? $file['id'] : null;
+
+					echo '
+					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="info-box">
+					<div class="icon '.$colIcon.'" style="min-width: 80px;">
+					'.$dsIcon.'
+					</div>
+					<div class="content">
+					<div class="text">
+					<a href="javascript:void(0)" onclick="openFile(\''. base64_encode($fileId) .'\')">'.$reg->ds_anexo.'</a>
+					<br/>
+					<a href="javascript:void(0)" onclick="excluirAnexo(\''. base64_encode($fileId) .'\', \''.base64_encode($reg->cd_it_atividade_doc).'\')">
+					<i class="material-icons col-red">delete</i>
+					</a>
+					</div>
+					</div>
+					</div>
+					</div>
+					';
+				}
+			}
+		}
+	}
+
     //Cadastrar comentário
 	public function Comentar($dsComentario, $snAtividade){
 
@@ -1430,10 +1512,10 @@ class cAtividade extends mAtividade
 
 			if ($num > 0) {
 
-				return $reg = $stmt->fetchAll(PDO::FETCH_OBJ);
+				return $stmt->fetchAll(PDO::FETCH_OBJ);
 
 			} else {
-				return null;
+				return [];
 			}
 
 		}else{
@@ -1712,16 +1794,24 @@ class cAtividade extends mAtividade
 	public static function cadastrarProdutoAssessoria($cdItAtividade=null, $dsDocumento=null, $dtEmissao=null, $dtValidade=null, $dsAnexo=null)
 	{
 		$cdUsuarioSessao = $_SESSION['cdUsuario'];
+		
+		$dropbox = new cDropbox();
+
+		$servico = cServico::getServicoByItAtividade($cdItAtividade);
+		$folder  = trim($servico->nm_cliente)."/".trim($servico->nm_empreendimento)."/Proposta - $servico->nr_protocolo.$servico->competencia";
+
+		$dropBoxUpload = $dropbox->upload($dsAnexo, $folder);
 
 		$mysql = MysqlConexao::getInstance();
 
-		$sql = "INSERT INTO eco_doc_assessoria (cd_it_atividade, ds_documento, dt_emissao, dt_validade, ds_anexo, cd_usuario_registro) VALUES (:cdItAtividade, :dsDocumento, :dtEmissao, :dtValidade, :dsAnexo, :cdUsuarioSessao)";
+		$sql = "INSERT INTO eco_doc_assessoria (cd_it_atividade, ds_documento, dt_emissao, dt_validade, ds_anexo, file_data, cd_usuario_registro) VALUES (:cdItAtividade, :dsDocumento, :dtEmissao, :dtValidade, :dsAnexo, :fileData, :cdUsuarioSessao)";
 		$stmt = $mysql->prepare($sql);
 		$stmt->bindParam(":cdItAtividade", $cdItAtividade);
 		$stmt->bindParam(":dsDocumento", $dsDocumento);
 		$stmt->bindParam(":dtEmissao", $dtEmissao);
 		$stmt->bindParam(":dtValidade", $dtValidade);
-		$stmt->bindParam(":dsAnexo", $dsAnexo);
+		$stmt->bindParam(":dsAnexo", $dsAnexo['name']);
+		$stmt->bindParam(":fileData", json_encode($dropBoxUpload));
 		$stmt->bindParam(":cdUsuarioSessao", $cdUsuarioSessao);
 		$result = $stmt->execute();
 		if ($result) {
@@ -1747,7 +1837,7 @@ class cAtividade extends mAtividade
 
 		$mysql = MysqlConexao::getInstance();
 
-		$sql = "SELECT cd_doc_assessoria, da.cd_it_atividade, ds_documento, dt_emissao, dt_validade, ds_anexo, da.dh_registro, nm_usuario, da.api_path
+		$sql = "SELECT cd_doc_assessoria, da.cd_it_atividade, ds_documento, dt_emissao, dt_validade, ds_anexo, file_data, da.dh_registro, nm_usuario, da.file_data
 		FROM eco_doc_assessoria da, g_usuario u, eco_it_atividade ia, eco_atividade a
 		WHERE da.cd_usuario_registro = u.cd_usuario
 		AND ia.cd_it_atividade = da.cd_it_atividade
@@ -2078,20 +2168,90 @@ class cAtividade extends mAtividade
 
 	public function getHistoricoAlteracaoData()
 	{
-		$cdUsuarioSessao = $_SESSION['cdUsuario'];
-		$cdEmpresa 		 = $_SESSION['cdEmpresa'];
-
 		$mysql = MysqlConexao::getInstance();
 
 		$sql = "SELECT *, (SELECT nm_usuario FROM g_usuario WHERE cd_usuario = eco_atividade_hist_prev.cd_usuario_registro) as nm_usuario FROM eco_atividade_hist_prev WHERE cd_atividade = :cdAtividade";
 		$stmt = $mysql->prepare($sql);
 		$stmt->bindParam(":cdAtividade", $this->cdAtividade);
 		$result = $stmt->execute();
+		
 		if ($result) {
 
 			return $stmt->fetchAll(PDO::FETCH_OBJ);
 
-		}else{
+		} else {
+			$erro = $stmt->errorInfo();
+			return $erro[2];
+		}
+	}
+
+	public function excluirItAtividade($cdAndamento)
+	{
+		$mysql = MysqlConexao::getInstance();
+
+		$sql = "DELETE FROM eco_it_atividade WHERE cd_it_atividade = :cdAndamento";
+		$stmt = $mysql->prepare($sql);
+		$stmt->bindParam(":cdAndamento", $cdAndamento);
+		$result = $stmt->execute();
+		
+		if ($result) {
+
+			return $stmt->rowCount();
+
+		} else {
+			$erro = $stmt->errorInfo();
+			return $erro[2];
+		}
+	}
+
+	public static function addAnexoItAtividade($cdItAtividade, $anexo) {
+		
+		$cdUsuarioSessao = $_SESSION['cdUsuario'];
+		
+		$dropbox = new cDropbox();
+
+		$servico = cServico::getServicoByItAtividade($cdItAtividade);
+		$folder  = trim($servico->nm_cliente)."/".trim($servico->nm_empreendimento)."/Proposta - $servico->nr_protocolo.$servico->competencia";
+
+		$dropBoxUpload = $dropbox->upload($anexo, $folder);
+
+		$mysql = MysqlConexao::getInstance();
+
+		$sql = "INSERT INTO eco_it_atividade_doc (cd_it_atividade, ds_anexo, file_data, cd_usuario_registro) VALUES (:cdItAtividade, :anexo, :fileData, :cdUsuarioSessao)";
+		$stmt = $mysql->prepare($sql);
+		$stmt->bindParam(":cdItAtividade", $cdItAtividade);
+		$stmt->bindParam(":anexo", $anexo['name']);
+		$stmt->bindParam(":fileData", json_encode($dropBoxUpload));
+		$stmt->bindParam(":cdUsuarioSessao", $cdUsuarioSessao);
+		$result = $stmt->execute();
+		
+		if ($result) {
+
+			return $stmt->rowCount();
+
+		} else {
+			$erro = $stmt->errorInfo();
+			return $erro[2];
+		}
+	}
+
+	public static function removeAnexoItAtividade($cdItAtividade, $fileId) {
+		
+		$dropbox = new cDropbox();
+		$dropbox->delete($fileId);
+
+		$mysql = MysqlConexao::getInstance();
+
+		$sql = "DELETE FROM eco_it_atividade_doc WHERE cd_it_atividade_doc = :cdItAtividade";
+		$stmt = $mysql->prepare($sql);
+		$stmt->bindParam(":cdItAtividade", $cdItAtividade);
+		$result = $stmt->execute();
+		
+		if ($result) {
+
+			return $stmt->rowCount();
+
+		} else {
 			$erro = $stmt->errorInfo();
 			return $erro[2];
 		}
