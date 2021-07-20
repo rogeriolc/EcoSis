@@ -34,6 +34,7 @@ $arrayAtvAssessoria   = array();
 $arrayAtvConsultoria  = array();
 $qtdAtvAbertas		  = 0;
 $qtdAtvConcluidas	  = 0;
+$qtdAtvValidas	  	  = 0;
 $percentualAtividades = 0;
 $percentualAtividades = 0;
 $maiorDataPrevista    = NULL;
@@ -84,10 +85,20 @@ if(!empty($cdServico) && !is_null($cdServico)) {
 				case 'E':
 				case 'R':
 				$qtdAtvAbertas++;
+				$qtdAtvValidas++;
+				break;
+				
+				case 'S':
+				case 'C':
 				break;
 
 				case 'O':
 				$qtdAtvConcluidas++;
+				$qtdAtvValidas++;
+				break;
+
+				default:
+				$qtdAtvValidas++;
 				break;
 			}
 
@@ -106,7 +117,7 @@ if(!empty($cdServico) && !is_null($cdServico)) {
 		}
 
 		//calcula o percentual de realização das atividades
-		$percentualAtividades = number_format(($qtdAtvConcluidas*100)/count($arrayAtividades),0,',','.');
+		$percentualAtividades = number_format(($qtdAtvConcluidas*100)/$qtdAtvValidas,0,',','.');
 
 	}
 
@@ -243,7 +254,7 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 mdc-bg-grey-200 p-t-5">
 
 												<h4>Resumo do serviço</h4>
-												<h1><?php echo $qtdAtvConcluidas; ?><small>/<?php echo count($arrayAtividades); ?></small></h1>
+												<h1><?php echo $qtdAtvConcluidas; ?><small>/<?php echo $qtdAtvValidas; ?></small></h1>
 												<br/>
 												<div class="progress">
 													<div class="progress-bar bg-green" role="progressbar" aria-valuenow="<?php echo $percentualAtividades; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percentualAtividades; ?>%;">
