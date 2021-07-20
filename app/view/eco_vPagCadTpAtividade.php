@@ -8,6 +8,7 @@ cSeguranca::validaSessao();
 $tpAtividade 		= new cTpAtividade();
 $catTpAtividade  	= new cCatTpAtividade();
 $fase 				= new cFaseAtividade();
+$tpDocumento		= new cTpDocumento();
 
 $nmArquivo 			= basename($_SERVER['PHP_SELF']);
 ?>
@@ -110,17 +111,33 @@ $nmArquivo 			= basename($_SERVER['PHP_SELF']);
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs tab-nav-right" role="tablist">
 						<li role="presentation" class="active"><a href="#tabFaseItem" data-toggle="tab">Fases</a></li>
+						<li role="presentation"><a href="#tabDocumentosItem" data-toggle="tab">Documentos</a></li>
 					</ul>
 
 					<!-- Tab panes -->
 					<div class="tab-content">
-						<div class="row">
-							<div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 text-center" style="border-right: 2px solid #eeeeee;">
-								<a href="javascript:void(0)" onclick="addFase(this)" class="col-green"><i class="material-icons">add</i></a>
-							</div>
-							<div class="col-xs-10 col-sm-10 col-md-11 col-lg-11">
-								<div role="tabpanel" class="tab-pane fade in active" id="tabFaseItem">
+						<div role="tabpanel" class="tab-pane fade in active" id="tabFaseItem">
+							<div class="row">
+								<div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 text-center" style="border-right: 2px solid #eeeeee;">
+									<a href="javascript:void(0)" onclick="addFase(this)" class="col-green"><i class="material-icons">add</i></a>
+								</div>
+								<div class="col-xs-10 col-sm-10 col-md-11 col-lg-11">
 									<table class="table table-condensed table-hover table-striped table-bordered tableFaseItem">
+										<tbody>
+
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+						<div role="tabpanel" class="tab-pane fade" id="tabDocumentosItem">
+							<div class="row">
+								<div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 text-center" style="border-right: 2px solid #eeeeee;">
+									<a href="javascript:void(0)" onclick="addDocumento(this)" class="col-green"><i class="material-icons">add</i></a>
+								</div>
+								<div class="col-xs-10 col-sm-10 col-md-11 col-lg-11">
+									<table class="table table-condensed table-hover table-striped table-bordered tableDocumentoItem">
 										<tbody>
 
 										</tbody>
@@ -194,18 +211,34 @@ $nmArquivo 			= basename($_SERVER['PHP_SELF']);
 					</div>
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs tab-nav-right" role="tablist">
-						<li role="presentation" class="active"><a href="#tabFaseItem" data-toggle="tab">Fases</a></li>
+						<li role="presentation" class="active"><a href="#tabAlterFaseItem" data-toggle="tab">Fases</a></li>
+						<li role="presentation"><a href="#tabAlterDocumentosItem" data-toggle="tab">Documentos</a></li>
 					</ul>
 
 					<!-- Tab panes -->
 					<div class="tab-content">
-						<div class="row">
-							<div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 text-center" style="border-right: 2px solid #eeeeee;">
-								<a href="javascript:void(0)" onclick="addFase(this)" class="col-green"><i class="material-icons">add</i></a>
+						<div role="tabpanel" class="tab-pane fade in active" id="tabAlterFaseItem">
+							<div class="row">
+								<div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 text-center" style="border-right: 2px solid #eeeeee;">
+									<a href="javascript:void(0)" onclick="addFase(this)" class="col-green"><i class="material-icons">add</i></a>
+								</div>
+								<div class="col-xs-10 col-sm-10 col-md-11 col-lg-11">
+									<table class="table table-condensed table-hover table-striped table-bordered tableFaseItem tableAlterFaseItem">
+										<tbody>
+
+										</tbody>
+									</table>
+								</div>
 							</div>
-							<div class="col-xs-10 col-sm-10 col-md-11 col-lg-11">
-								<div role="tabpanel" class="tab-pane fade in active" id="tabFaseItem">
-									<table class="table table-condensed table-hover table-striped table-bordered tableFaseItem">
+						</div>
+
+						<div role="tabpanel" class="tab-pane fade" id="tabAlterDocumentosItem">
+							<div class="row">
+								<div class="col-xs-2 col-sm-2 col-md-1 col-lg-1 text-center" style="border-right: 2px solid #eeeeee;">
+									<a href="javascript:void(0)" onclick="addDocumento(this)" class="col-green"><i class="material-icons">add</i></a>
+								</div>
+								<div class="col-xs-10 col-sm-10 col-md-11 col-lg-11">
+									<table class="table table-condensed table-hover table-striped table-bordered tableDocumentoItem tableAlterDocumentoItem">
 										<tbody>
 
 										</tbody>
@@ -246,7 +279,7 @@ $nmArquivo 			= basename($_SERVER['PHP_SELF']);
 		$("div.form-line.focused").removeClass("focused");
 	});
 
-	$(".tableFaseItem tbody").sortable({
+	$(".tableFaseItem tbody, .tableDocumentoItem tbody").sortable({
 		placeholder: "ui-state-highlight"
 	});
 
@@ -254,12 +287,25 @@ $nmArquivo 			= basename($_SERVER['PHP_SELF']);
 
 		var form = $(t).closest("form").attr('id');
 
-		$("#"+form+" .tableFaseItem").append(`<tr> <td class="cursorMove col-md-1 col-xs-1 text-center text-middle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></td><td> <select class="form-control select2" name="cdFase[]" style="width: 100%;"><?php $fase->listOption(); ?></select> </td> <td class="col-md-1 col-xs-2  text-center text-middle"> <a href="javascript:void(0)" onclick="removerFase(this)" class="col-red"> <i class="material-icons">delete</i> </a> </td> </tr>`);
+		$("#"+form+" .tableFaseItem").append(`<tr> <td class="cursorMove col-md-1 col-xs-1 text-center text-middle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></td><td> <select class="form-control select2" name="cdFase[]" style="width: 100%;"><?php $fase->listOption(); ?></select> </td> <td class="col-md-1 col-xs-2 text-center text-middle"> <a href="javascript:void(0)" onclick="removerFase(this)" class="col-red"> <i class="material-icons">delete</i> </a> </td> </tr>`);
+
+		$.AdminBSB.select.activate();
+	}
+
+	function addDocumento(t){
+
+		var form = $(t).closest("form").attr('id');
+
+		$("#"+form+" .tableDocumentoItem").append(`<tr> <td class="cursorMove col-md-1 col-xs-1 text-center text-middle"><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></td><td> <select class="form-control select2" name="cdDocumento[]" style="width: 100%;"><?php $tpDocumento->listOption(); ?></select> </td> <td class="col-md-1 col-xs-2 text-center text-middle"> <a href="javascript:void(0)" onclick="removerDocumento(this)" class="col-red"> <i class="material-icons">delete</i> </a> </td> </tr>`);
 
 		$.AdminBSB.select.activate();
 	}
 
 	function removerFase(f){
+		$(f).closest("tr").remove();
+	}
+
+	function removerDocumento(f){
 		$(f).closest("tr").remove();
 	}
 
@@ -368,24 +414,45 @@ $nmArquivo 			= basename($_SERVER['PHP_SELF']);
 		$("#formAlterItemServico select[name=snAtivo]").val(a).trigger("change");
 		$("#formAlterItemServico select[name=cdCatTpAtividade], #formAlterItemServico select[name=snAtivo]").selectpicker('refresh');
 
-		if(pro == 'S'){
+		if (pro == 'S') {
 
-			$("#formAlterItemServico input[name=snPedirProtocolo]").prop("checked",true);
+			$("#formAlterItemServico input[name=snPedirProtocolo]").prop("checked", true);
 
-		}else{
+		} else {
 
-			$("#formAlterItemServico input[name=snPedirProtocolo]").prop("checked",false);
+			$("#formAlterItemServico input[name=snPedirProtocolo]").prop("checked", false);
 
 		}
 
-		$("#formAlterItemServico .tableFaseItem tbody").html('<i class="fas fa-spinner fa-spin"></i> Carregando...');
+		$("#formAlterItemServico .tableAlterFaseItem tbody").html('<i class="fas fa-spinner fa-spin"></i> Carregando...');
 
 		$.ajax({
 			url: 'action/eco_viewListFormItemServico.php',
 			type: 'POST',
-			data: {cdTpAtividade: c},
+			data: { cdTpAtividade: c },
 			success: function(data){
-				$("#formAlterItemServico .tableFaseItem tbody").html(data);
+				$("#formAlterItemServico .tableAlterFaseItem tbody").html(data);
+				$.AdminBSB.select.activate();
+			}
+		})
+		.done(function() {
+			console.log("success");
+		})
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+
+		$("#formAlterItemServico .tableAlterDocumentoItem tbody").html('<i class="fas fa-spinner fa-spin"></i> Carregando...');
+
+		$.ajax({
+			url: 'action/eco_viewListFormDocumentoItemServico.php',
+			type: 'POST',
+			data: { cdTpAtividade: c },
+			success: function(data){
+				$("#formAlterItemServico .tableAlterDocumentoItem tbody").html(data);
 				$.AdminBSB.select.activate();
 			}
 		})

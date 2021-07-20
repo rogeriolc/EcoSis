@@ -128,9 +128,11 @@ $_UP['erros'][4] = 'Não foi feito o upload do arquivo';
 			//$nome_final2 = preg_replace( '/[`^~\'"]/ç', null, iconv( 'UTF-8', 'ASCII//TRANSLIT', $nome_final ) );
 		}
 
-		$dropBoxUpload = $dropbox->upload($_FILES['file']['tmp_name'], $_UP['pasta']);
+		
+		$servico = cServico::getServicoByAtividade($cdAtividade);
+		$folder  = trim($servico->nm_cliente)."/".trim($servico->nm_empreendimento)."/Proposta - $servico->nr_protocolo.$servico->competencia";
 
-		var_dump($dropBoxUpload);
+		$dropBoxUpload = $dropbox->upload($_FILES['file']['tmp_name'], $_UP['pasta']);
 
 		// Depois verifica se é possível mover o arquivo para a pasta escolhida
 		if (move_uploaded_file($_FILES['file']['tmp_name'], $_UP['pasta'] . $nome_final)) {

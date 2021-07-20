@@ -59,7 +59,7 @@ switch (gettype($snAtualiza)) {
 			';
 			$dsMensagemFinal		= '<h4>Calango Meio Ambiente</h4>';
 
-			$snEnviaEmail = $notificacao->enviaEmail('info@ecosis.boeckmann.com.br', 'Calango Meio Ambiente', $dsEmailDestino, $nmUsuarioDestinatario, $dsAssunto, $dsTitulo, $dsCorpoMensagem, $dsMensagemFinal);
+			$snEnviaEmail = $notificacao->enviaEmail('ecosis@calango.eng.br', 'Calango Meio Ambiente', $dsEmailDestino, $nmUsuarioDestinatario, $dsAssunto, $dsTitulo, $dsCorpoMensagem, $dsMensagemFinal);
 
 			break;
 

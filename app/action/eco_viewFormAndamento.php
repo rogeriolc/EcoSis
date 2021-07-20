@@ -60,6 +60,9 @@ switch ($tpStatus) {
 	</li>
 	<li>
 	<a href="javascript:void(0);" onclick="cancelarItAtividade(this)" data-cod="'.$cdItAtividade.'" data-atv="'.$cdAtividade.'" class="waves-effect waves-block"><i class="material-icons col-red" style="color: #F44336 !important">block</i> Cancelar</a>
+	</li>
+	<li>
+	<a href="javascript:void(0);" onclick="excluirItAtividade(this)" data-cod="'.$cdItAtividade.'" data-atv="'.$cdAtividade.'" class="waves-effect waves-block"><i class="material-icons col-red" style="color: #F44336 !important">delete</i> Excluir</a>
 	</li>';
 	$disabled = null;
 	break;
@@ -74,6 +77,9 @@ switch ($tpStatus) {
 	</li>
 	<li>
 	<a href="javascript:void(0);" onclick="cancelarItAtividade(this)" data-cod="'.$cdItAtividade.'" data-atv="'.$cdAtividade.'" class="waves-effect waves-block"><i class="material-icons col-red" style="color: #F44336 !important">block</i> Cancelar</a>
+	</li>
+	<li>
+	<a href="javascript:void(0);" onclick="excluirItAtividade(this)" data-cod="'.$cdItAtividade.'" data-atv="'.$cdAtividade.'" class="waves-effect waves-block"><i class="material-icons col-red" style="color: #F44336 !important">delete</i> Excluir</a>
 	</li>';
 	$disabled = null;
 	break;
@@ -206,7 +212,7 @@ switch ($tpStatus) {
 			<div role="tabpanel" class="tab-pane" id="listAnexoAndamento">
 				<div class="container-fluid">
 					<div class="row">
-						<?php $atv->ListarAnexos(); ?>
+						<?php $atv->renderAnexos(); ?>
 					</div>
 				</div>
 			</div>
@@ -726,6 +732,119 @@ switch ($tpStatus) {
 
 		
 		return false;
+	}
+
+	function excluirItAtividade(a){
+
+		swal("Atenção", "Deseja realmente excluir este andamento?", {
+			buttons: {
+				cancel: 'Não',
+				confirm: { text: 'Sim', value: 'yes' }
+			},
+			icon: 'warning'
+		})
+		.then((value) => {
+			if (value) {
+				$.ajax({
+					url: 'action/eco_excluirAndamento.php',
+					type: 'POST',
+					data: {
+						cdAndamento: $(a).data('cod')
+					},
+					success: function(data){
+						$("#msgItAtividade").html(data);
+					}
+				})
+				.done(function() {
+					setTimeout(() => {
+
+						$('#cardViewAndamento').empty();
+
+						$.ajax({
+							url: 'action/eco_listTableItAtividade.php',
+							type: 'POST',
+							data: {
+								cdAtividade: '<?php echo $cdAtividade; ?>'
+							},
+							success: function(data){
+								table.fnDestroy();
+								$("#tableAndamentos tbody").html(data);
+
+								$("#tableAndamentos").dataTable({
+									"dom": '<"toolbar pull-right">frt<"bottom">p',
+									"columnDefs": [
+									{ "type": 'num', "targets": 0 }
+									],
+									"order": [[ 0, "desc" ]],
+									"scrollY":        "500px",
+									"scrollCollapse": true,
+									"paging":         false
+								});
+							}
+						})
+						.done(function() {
+							console.log("success");
+						})
+						.fail(function() {
+							console.log("error");
+						})
+						.always(function() {
+							console.log("complete");
+						});
+
+					}, 500);
+					
+					consultoriaList.clear();
+					assessoriaList.clear();
+					
+					//assessoria
+					$.ajax({
+						url: 'action/eco_returnJsonAtividades.php',
+						type: 'GET',
+						datatype: 'json',
+						data: { cdServico: '<?php echo $cdServico; ?>', tpAtividade: 'A' },
+						success: function(data){
+							ListValues = data;
+							assessoriaData = data;
+
+							console.log(data);
+						}
+					})
+					.done(function() {
+						assessoriaList = new List('tabAssessoria', ListOptions, ListValues);
+					})
+					.fail(function() {
+					})
+					.always(function() {
+					});
+
+					//consultoria
+					$.ajax({
+						url: 'action/eco_returnJsonAtividades.php',
+						type: 'GET',
+						datatype: 'json',
+						data: { cdServico: '<?php echo $cdServico; ?>', tpAtividade: 'C' },
+						success: function(data){
+							ListValues = data;
+							consultoriaList = data;
+						}
+					})
+					.done(function() {
+						consultoriaList = new List('tabConsultoria', ListOptions, ListValues);
+					})
+					.fail(function() {
+					})
+					.always(function() {
+					});
+				})
+				.fail(function() {
+					console.log("error");
+				})
+				.always(function() {
+					console.log("complete");
+				});
+			}
+		});
 	}
 
 	function reabrirItAtividade(a){

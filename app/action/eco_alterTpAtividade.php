@@ -17,6 +17,7 @@ $cdTpAtividade 		= $_POST['cdTpAtividade'];
 $dsTpAtividade 		= strtoupper($_POST['dsTpAtividade']);
 $cdCatTpAtividade 	= isset($_POST['cdCatTpAtividade']) ? base64_decode($_POST['cdCatTpAtividade']) : null;
 $cdFaseAtv			= isset($_POST['cdFase']) ? $_POST['cdFase'] : null;
+$cdDocumentoAtv		= isset($_POST['cdDocumento']) ? $_POST['cdDocumento'] : null;
 $snAtivo 			= strtoupper($_POST['snAtivo']);
 $cdEmpresa			= $_SESSION['cdEmpresa'];
 
@@ -51,6 +52,23 @@ if($snTpAtividadeExistente == 0){
 			$snCadFase = $fase->addFaseAtividade();
 
 			$c++;
+		}
+
+		$i = 0;
+
+		$documento = new cTpDocumento();
+		$documento->setCdTpAtividade($cdTpAtividade);
+		$documento->removeDocumentoAtividade();
+		
+		foreach ($cdDocumentoAtv as $doc) {
+			$cdDocumento = base64_decode($doc);
+
+			$documento = new cTpDocumento($cdDocumento, null, $i);
+			$documento->setCdTpAtividade($cdTpAtividade);
+
+			$snCadFase = $documento->addDocumentoAtividade();
+
+			$i++;
 		}
 
 		break;

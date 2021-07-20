@@ -66,7 +66,10 @@ if ($_UP['renomeia'] == true) {
 
 } else {
 
-	$dropBoxUpload = $dropbox->upload($anexo);
+	$servico = cProposta::getByServico($cdServico);
+	$folder  = trim($servico->nm_cliente)."/".trim($servico->nm_empreendimento)."/Proposta - $servico->nr_protocolo.$servico->competencia";
+
+	$dropBoxUpload = $dropbox->upload($anexo, $folder);
 
 	if ($dropBoxUpload->id) {
 		$snAnexo = cServico::addAnexoSolicitacao($cdSolDoc, $anexo['name'], json_encode($dropBoxUpload));

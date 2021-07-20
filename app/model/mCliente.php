@@ -6,6 +6,7 @@ class mCliente extends mPessoa {
     public $nrInscricaoEstadual;
     public $nrInscricaoMunicipal;
     public $dsCtf;
+    public $dsEmailRepresentante;
     public $snAtivo;
 
     public function __construct($cdCliente = null, $nmPessoa = null, $tpPessoa = null, $nrRg = null, $nrCpf = null, $nrInscricaoEstadual = null, $nrInscricaoMunicipal = null, $dsCtf = null, $dsEmail = null, $dsSite = null, $dsEndereco = null, $nmBairro = null, $nmCidade = null, $cdCep = null, $uf = null, $nrTelefone = null, $nrCelular = null, $snAtivo = null)
@@ -81,6 +82,26 @@ class mCliente extends mPessoa {
      * @return self
      */
     public function setDsCtf($dsCtf)
+    {
+        $this->dsCtf = $dsCtf;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDsEmailRepresentante()
+    {
+        return $this->dsCtf;
+    }
+
+    /**
+     * @param mixed $dsEmailRepresentante
+     *
+     * @return self
+     */
+    public function setDsEmailRepresentante($dsCtf)
     {
         $this->dsCtf = $dsCtf;
 

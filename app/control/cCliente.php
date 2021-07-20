@@ -89,7 +89,7 @@ class cCliente extends mCliente {
 
         $mysql = MysqlConexao::getInstance();
 
-        $sql = "SELECT cd_cliente, nm_cliente, ds_email FROM g_cliente WHERE cd_cliente = :cdCliente";
+        $sql = "SELECT cd_cliente, nm_cliente, ds_email, (SELECT ds_email FROM g_representante_cliente WHERE cd_cliente = g_cliente.cd_cliente ) as ds_email_representante FROM g_cliente WHERE cd_cliente = :cdCliente";
         $stmt = $mysql->prepare($sql);
         $stmt->bindParam(":cdCliente", $this->cdCliente);
         $result = $stmt->execute();
@@ -98,6 +98,7 @@ class cCliente extends mCliente {
 
             $this->nmCliente    = $reg->nm_cliente;
             $this->dsEmail      = $reg->ds_email;
+            $this->dsEmailRepresentante = $reg->ds_email_representante;
         }else{
             echo var_dump($stmt->errorInfo());
         }

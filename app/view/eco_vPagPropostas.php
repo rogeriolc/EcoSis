@@ -5,6 +5,10 @@ include '../conf/autoLoad.php';
 
 cSeguranca::validaSessao();
 
+//23 - Permissao para alterar aprovar proposta
+$cdPermissao 	= 23;
+$autorizado 	= cPermissao::validarPermissao($cdPermissao, false);
+
 $nmArquivo = basename($_SERVER['PHP_SELF']);
 
 $usuarios 		= new cUsuario;
@@ -127,6 +131,14 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 							echo '<div class="col-md-1">';
 							echo 'Previsão:</strong><br><strong class="previsao">'.$dtPrevConclusao.'</strong>';
 							echo '</div>';
+							
+							if ($dtPrevConclusao !== '-' && date("Y-m-d", strtotime($propostaPai->dt_prev_conclusao)) < date('Y-m-d') && $propostaPai->tp_status === 'E') {
+								echo '<div class="col-md-2 mdc-text-red">';
+								echo 'Esta proposta está vencida. Você pode cancela-lá clicando <a href="javascript:void(0)" onClick="handleCancelarProposta(\''. base64_encode($propostaAtual) .'\')">aqui</a>';
+								echo '</div>';
+							}
+
+							
 							echo '<div class="col-md-2">';
 							echo 'Status:</strong><br>'.$icon.'&nbsp; <span>'.$descriptionStatus.'</span>';
 							echo '</div>';
@@ -398,19 +410,27 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 				<div class="col-xs-12 col-sm-12 col-md-7 col-lg-7 bg-white">
 					<div class="container-fluid">
 						<br>
-						<div class="form-group">
-							<label>Vínculo:</label>
-							<!-- Lista de Clientes -->
-							<select name="cdClienteVinculo" class="form-control clienteVinculoProposta" data-live-search="true" onchange="setClienteVinculoProposta(this)">
-								<option></option>
-							</select>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>Vínculo:</label>
+									<!-- Lista de Clientes -->
+									<select name="cdClienteVinculo" class="form-control clienteVinculoProposta" data-live-search="true" onchange="setClienteVinculoProposta(this)">
+										<option></option>
+									</select>
+								</div>
+							</div>
+							<div class="col-md-12">
+								<div class="form-group">
+									<label>Itens do Serviço:</label>
+									<select name="cdTpAtividade" class="form-control" data-live-search="true" onchange="addAtividadeProposta(this)">
+										<option></option>
+									</select>
+								</div>
+							</div>
 						</div>
-						<div class="form-group">
-							<label>Itens do Serviço:</label>
-							<select name="cdTpAtividade" class="form-control" data-live-search="true" onchange="addAtividadeProposta(this)">
-								<option></option>
-							</select>
-						</div>
+						
+						
 
 						<div class="row" style="display: flex; align-items: stretch;">
 							<div class="col-md-6">
@@ -470,20 +490,57 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 					<div>
 						<div class="p-b-15" style="display: flex; flex-direction: column-reverse; flex-wrap: wrap; align-self: flex-end; align-items: flex-end; align-content: flex-end; justify-content: flex-start; min-height: 100vh;">
 							<div class="w-100 p-t-15">
+
+								<?php if ($autorizado) { ?>
+									<div class="p-b-15">
+										<input type="checkbox" id="checkFecharProposta" class="filled-in chk-col-green">
+										<label for="checkFecharProposta">Proposta Aceita?</label>
+									</div>
+								<?php } ?>
+
 								<div class="p-b-15">
-									<input type="checkbox" id="checkFecharProposta" class="filled-in chk-col-green">
-									<label for="checkFecharProposta">Proposta Aceita?</label>
+									<input type="checkbox" id="checkEnviarCliente" class="filled-in chk-col-green">
+									<label for="checkEnviarCliente">Enviar para aprovação do cliente</label>
+								</div>
+
+								<div id="propostaFecharSemClienteAprovacao" class="p-b-15">
+									<input type="checkbox" id="checkFecharSemAprovacao" class="filled-in chk-col-green">
+									<label for="checkFecharSemAprovacao">Fechar sem aprovação do cliente?</label>
 								</div>
 
 								<button type="submit" class="btn btn-sm btn-block btn-success"><i class="material-icons">save</i>&nbsp; Salvar</button>
 								<button type="button" class="btn btn-sm btn-block btn-danger" onclick="cancelarProposta()"><i class="material-icons">block</i>&nbsp; Cancelar</button>
 							</div>
-							<div class="w-100 m-b-10">
+
+							<div class="w-100">
+								<div class="row">
+									<div class="col-md-8">
+										<div class="form-group">
+											<div class="form-line">
+												<label>Número da proposta:</label>
+												<input type="text" name="nrProtocolo" class="form-control" onchange="setNrProtocolo(this)" autocomplete="off" />
+											</div>
+										</div>	
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<div class="form-line">
+												<label>Alteração:</label>
+												<input type="text" name="nrAlteracao" class="form-control" onchange="setNrAlteracao(this)" autocomplete="off" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="w-100 m-b-20">
 								<span>Total da Proposta</span>
 								<br>
 								<small class="font-20">R$&nbsp; </small>
 								<strong id="totalGeralProposta" class="font-45 mdc-text-green">0,00</strong>
 							</div>
+
+							<div id="propostaClienteAprovacao" class="w-100"></div>
 						</div>
 					</div>
 				</div>
@@ -497,8 +554,6 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 <script type="text/javascript">
 	$.AdminBSB.input.activate();
 	// $.AdminBSB.select.activate();
-
-		console.log(window.location);
 	// $(".page-loader-wrapper").fadeOut("fast");
 
 	var path = '<?php echo $nmArquivo;?>';
@@ -560,7 +615,6 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 		renderOptionEmpreendimentos();
 		renderOptionTiposAtividade();
 		calcularTotalProposta();
-		
 	}
 
 	function fecharProposta(form) {
@@ -597,6 +651,11 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 
 			let url;
 			let formId;
+
+			if (!JSON.parse(formData).able_to_close && JSON.parse(formData).fechar) {
+				swal("Erro!", "Ainda existem clientes que não aprovaram a proposta.", "error");
+				return false;
+			}
 			
 			if (JSON.parse(formData).cd_proposta) {
 				url = "action/eco_alterProposta.php";
@@ -612,7 +671,6 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 				data: JSON.parse(formData),
 				success: function (data) {
 					$("#divResult").html(data);
-					console.log(data);
 				}
 			})
 				.done(function () {
@@ -785,5 +843,41 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 	function search(value) {
 		localStorage.setItem('page', 'eco_vPagPropostas');
 		window.location.href = `${window.location.origin}${window.location.pathname}?year=${value}`;
+	}
+
+	function handleCancelarProposta(id) {
+		swal("Atenção", "Deseja realmente cancelar esta proposta?", {
+			buttons: {
+				cancel: 'Não',
+				confirm: { text: 'Sim', value: 'yes' }
+			},
+			icon: 'warning'
+		})
+		.then((value) => {
+			if (value) {
+				$.ajax({
+					url: 'action/eco_cancelarProposta.php',
+					type: 'POST',
+					data: {
+						cdPropostaLicenca: id
+					},
+					success: function (data) {
+						$("#divResult").html(data);
+					}
+				})
+					.done(function () {
+						$("#modalNewProposta").modal("hide");
+						setTimeout(function () {
+							refresh(path);
+						}, 1000);
+					})
+					.fail(function () {
+						console.log("error");
+					})
+					.always(function () {
+						console.log("complete");
+					});
+			}
+		});
 	}
 </script>

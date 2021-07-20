@@ -167,7 +167,7 @@ class cEmpreendimento extends mEmpreendimento {
 
         $mysql = MysqlConexao::getInstance();
 
-        $sql = "SELECT nm_empreendimento FROM g_empreendimento WHERE cd_empreendimento = :cdEmpreendimento";
+        $sql = "SELECT * FROM g_empreendimento WHERE cd_empreendimento = :cdEmpreendimento";
         $stmt = $mysql->prepare($sql);
         $stmt->bindParam(":cdEmpreendimento", $this->cdEmpreendimento);
         $result = $stmt->execute();

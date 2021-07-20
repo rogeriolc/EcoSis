@@ -58,8 +58,6 @@ $dsMensagemFinal		= '<h4>Calango Meio Ambiente</h4>';
 
 $snEnviaEmail = $notif->enviaEmail('ecosis@calango.eng.br', 'Calango Meio Ambiente', $dsEmailDestino, $nmColaboradorDestino, $dsAssunto, $dsTitulo, $dsCorpoMensagem, $dsMensagemFinal, $fileAnexo);
 
-var_dump($snEnviaEmail);
-
 switch (gettype($snEnviaEmail)) {
 	case 'boolean':
 

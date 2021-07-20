@@ -336,7 +336,7 @@ class cServico extends mServico {
 
 		$mysql = MysqlConexao::getInstance();
 
-		$sql = "SELECT s.cd_servico, s.nr_processo, s.tp_status, s.dt_prev_conclusao, e.cd_empreendimento, e.nm_empreendimento, c.cd_cliente, c.nm_cliente, s.cd_orgao_licenciado FROM eco_servico s, g_empreendimento e, g_cliente c WHERE s.cd_cliente = c.cd_cliente AND s.cd_empreendimento = e.cd_empreendimento AND cd_servico = :cdServico";
+		$sql = "SELECT s.cd_servico, s.nr_processo, s.tp_status, s.dt_prev_conclusao, s.cd_proposta_cliente, e.cd_empreendimento, e.nm_empreendimento, c.cd_cliente, c.nm_cliente, s.cd_orgao_licenciado FROM eco_servico s, g_empreendimento e, g_cliente c WHERE s.cd_cliente = c.cd_cliente AND s.cd_empreendimento = e.cd_empreendimento AND cd_servico = :cdServico";
 		$stmt = $mysql->prepare($sql);
 		$stmt->bindParam(":cdServico", $this->cdServico);
 		$result = $stmt->execute();
@@ -353,6 +353,7 @@ class cServico extends mServico {
 				$this->nmCliente 	  		= $reg->nm_cliente;
 				$this->cdEmpreendimento		= $reg->cd_empreendimento;
 				$this->nmEmpreendimento		= $reg->nm_empreendimento;
+				$this->cdPropostaCliente	= $reg->cd_proposta_cliente;
 
 			}else{
 				return 0;
@@ -743,6 +744,146 @@ class cServico extends mServico {
 			return $error[2];
 		}
 	}
+
+    public static function getServicosByProposta($cdProposta) {
+        $mysql = MysqlConexao::getInstance();
+
+        $sql = "
+        SELECT 	*
+        FROM 	eco_servico s,
+                eco_proposta p,
+                eco_proposta_cliente pc
+        WHERE 	p.cd_proposta 			= pc.cd_proposta
+        AND 	pc.cd_proposta_cliente 	= s.cd_proposta_cliente
+        AND 	p.cd_proposta 			= :cdProposta
+        ";
+        $stmt = $mysql->prepare($sql);
+        $stmt->bindParam(":cdProposta", $cdProposta);
+        $result = $stmt->execute();
+        if ($result) {
+
+            return $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        }else{
+            $error = $stmt->errorInfo();
+            return $error[2];
+        }
+    }
+
+    public static function getServicoByAtividadeFase($cdAtividadeFase) {
+        $mysql = MysqlConexao::getInstance();
+
+        $sql = "
+        SELECT 	s.cd_servico,
+				p.cd_proposta,
+				p.nr_alteracao,
+				p.nr_protocolo,
+				p.competencia,
+				c.nm_cliente,
+				e.nm_empreendimento
+		FROM 	eco_servico s,
+				eco_proposta p,
+				eco_proposta_cliente pc,
+				eco_atividade a,
+				eco_atividade_fase af,
+				g_cliente c,
+				g_empreendimento e
+		WHERE 	p.cd_proposta 			= pc.cd_proposta
+		AND 	pc.cd_proposta_cliente 	= s.cd_proposta_cliente
+		AND		a.cd_servico			= s.cd_servico
+		AND     a.cd_atividade			= af.cd_atividade
+		AND 	c.cd_cliente			= pc.cd_cliente
+		AND 	e.cd_empreendimento		= pc.cd_empreendimento
+		AND 	af.cd_atividade_fase	= :cdAtividadeFase
+        ";
+        $stmt = $mysql->prepare($sql);
+        $stmt->bindParam(":cdAtividadeFase", $cdAtividadeFase);
+        $result = $stmt->execute();
+        if ($result) {
+
+            return $stmt->fetch(PDO::FETCH_OBJ);
+
+        }else{
+            $error = $stmt->errorInfo();
+            return $error[2];
+        }
+    }
+
+    public static function getServicoByAtividade($cdAtividade) {
+        $mysql = MysqlConexao::getInstance();
+
+        $sql = "
+        SELECT 	s.cd_servico,
+				p.cd_proposta,
+				p.nr_alteracao,
+				p.nr_protocolo,
+				p.competencia,
+				c.nm_cliente,
+				e.nm_empreendimento
+		FROM 	eco_servico s,
+				eco_proposta p,
+				eco_proposta_cliente pc,
+				eco_atividade a,
+				g_cliente c,
+				g_empreendimento e
+		WHERE 	p.cd_proposta 			= pc.cd_proposta
+		AND 	pc.cd_proposta_cliente 	= s.cd_proposta_cliente
+		AND		a.cd_servico			= s.cd_servico
+		AND 	c.cd_cliente			= pc.cd_cliente
+		AND 	e.cd_empreendimento		= pc.cd_empreendimento
+		AND 	a.cd_atividade			= :cdAtividade
+        ";
+        $stmt = $mysql->prepare($sql);
+        $stmt->bindParam(":cdAtividade", $cdAtividade);
+        $result = $stmt->execute();
+        if ($result) {
+
+            return $stmt->fetch(PDO::FETCH_OBJ);
+
+        }else{
+            $error = $stmt->errorInfo();
+            return $error[2];
+        }
+    }
+
+    public static function getServicoByItAtividade($cdItAtividade) {
+        $mysql = MysqlConexao::getInstance();
+
+        $sql = "
+        SELECT 	s.cd_servico,
+				p.cd_proposta,
+				p.nr_alteracao,
+				p.nr_protocolo,
+				p.competencia,
+				c.nm_cliente,
+				e.nm_empreendimento
+		FROM 	eco_servico s,
+				eco_proposta p,
+				eco_proposta_cliente pc,
+				eco_atividade a,
+				eco_it_atividade ia,
+				g_cliente c,
+				g_empreendimento e
+		WHERE 	p.cd_proposta 			= pc.cd_proposta
+		AND 	pc.cd_proposta_cliente 	= s.cd_proposta_cliente
+		AND		a.cd_servico			= s.cd_servico
+		AND     a.cd_atividade			= ia.cd_atividade
+		AND 	c.cd_cliente			= pc.cd_cliente
+		AND 	e.cd_empreendimento		= pc.cd_empreendimento
+		AND 	ia.cd_it_atividade		=  :cdItAtividade
+        ";
+        $stmt = $mysql->prepare($sql);
+        $stmt->bindParam(":cdItAtividade", $cdItAtividade);
+        $result = $stmt->execute();
+        if ($result) {
+
+            return $stmt->fetch(PDO::FETCH_OBJ);
+
+        }else{
+            $error = $stmt->errorInfo();
+            return $error[2];
+        }
+    }
 }
 
 ?>
