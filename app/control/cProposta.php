@@ -2,13 +2,15 @@
 
 class cProposta extends mPropostaLicencaAmb
 {
-    public function __construct($cdPropostaLicenca = null, $tpStatus = null, $vlPago = null, $dtPrevConclusao = null, $dsObservacao = null)
+    public function __construct($cdPropostaLicenca = null, $tpStatus = null, $vlPago = null, $dtPrevConclusao = null, $dsObservacao = null, $nrProtocolo = null, $nrAlteracao = null)
     {
-        $this->cdPropostaLicenca     = $cdPropostaLicenca;
+        $this->cdPropostaLicenca    = $cdPropostaLicenca;
         $this->tpStatus             = $tpStatus;
-        $this->vlPago                 = $vlPago;
+        $this->vlPago               = $vlPago;
         $this->dtPrevConclusao      = $dtPrevConclusao;
         $this->dsObservacao         = $dsObservacao;
+        $this->nrProtocolo          = $nrProtocolo;
+        $this->nrAlteracao          = $nrAlteracao;
     }
 
     public static function getData($cdProposta)
@@ -269,11 +271,13 @@ class cProposta extends mPropostaLicencaAmb
 
         $cdUsuarioSessao = $_SESSION['cdUsuario'];
 
-        $sql = "UPDATE eco_proposta SET dt_prev_conclusao = :dtPrevConclusao, ds_observacao = :dsObservacao, valor = :valor WHERE cd_proposta = :cdProposta";
+        $sql = "UPDATE eco_proposta SET dt_prev_conclusao = :dtPrevConclusao, ds_observacao = :dsObservacao, valor = :valor, nr_protocolo = :nrProtocolo, nr_alteracao = :nrAlteracao WHERE cd_proposta = :cdProposta";
         $stmt = $mysql->prepare($sql);
         $stmt->bindParam(":cdProposta", $this->cdPropostaLicenca);
         $stmt->bindParam(":dtPrevConclusao", $this->dtPrevConclusao);
         $stmt->bindParam(":dsObservacao", $this->dsObservacao);
+        $stmt->bindParam(":nrProtocolo", $this->nrProtocolo);
+        $stmt->bindParam(":nrAlteracao", $this->nrAlteracao);
         $stmt->bindParam(":valor", $this->vlPago);
         $result = $stmt->execute();
         if ($result) {

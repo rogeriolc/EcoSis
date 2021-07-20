@@ -511,7 +511,29 @@ $ano 			= isset($_GET['year']) ? $_GET['year'] : date("Y");
 								<button type="submit" class="btn btn-sm btn-block btn-success"><i class="material-icons">save</i>&nbsp; Salvar</button>
 								<button type="button" class="btn btn-sm btn-block btn-danger" onclick="cancelarProposta()"><i class="material-icons">block</i>&nbsp; Cancelar</button>
 							</div>
-							<div class="w-100 m-b-10">
+
+							<div class="w-100">
+								<div class="row">
+									<div class="col-md-8">
+										<div class="form-group">
+											<div class="form-line">
+												<label>Número da proposta:</label>
+												<input type="text" name="nrProtocolo" class="form-control" onchange="setNrProtocolo(this)" autocomplete="off" />
+											</div>
+										</div>	
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<div class="form-line">
+												<label>Alteração:</label>
+												<input type="text" name="nrAlteracao" class="form-control" onchange="setNrAlteracao(this)" autocomplete="off" />
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="w-100 m-b-20">
 								<span>Total da Proposta</span>
 								<br>
 								<small class="font-20">R$&nbsp; </small>

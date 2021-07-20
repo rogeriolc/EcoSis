@@ -14,9 +14,11 @@ class mPropostaLicencaAmb{
 	public $dsObservacao;
     public $cdEmpresa;
     public $vlDesconto;
+    public $nrProtocolo;
+    public $nrAlteracao;
 
 
-	public function __construct($cdPropostaLicenca=null, $cdCliente=null, $cdEmpreendimento=null, $tpStatus=null, $vlNegociado=null, $vlPago=null, $dtPrevConclusao=null, $dsObservacao=null, $vlDesconto=null)
+	public function __construct($cdPropostaLicenca=null, $cdCliente=null, $cdEmpreendimento=null, $tpStatus=null, $vlNegociado=null, $vlPago=null, $dtPrevConclusao=null, $dsObservacao=null, $vlDesconto=null, $nrProtocolo = null, $nrAlteracao = null)
 	{
 		$this->cdPropostaLicenca 	= $cdPropostaLicenca;
 		$this->cdCliente 			= $cdCliente;
@@ -27,6 +29,8 @@ class mPropostaLicencaAmb{
         $this->dtPrevConclusao      = $dtPrevConclusao;
         $this->dsObservacao 		= $dsObservacao;
         $this->vlDesconto           = $vlDesconto;
+        $this->nrProtocolo          = $nrProtocolo;
+        $this->nrAlteracao          = $nrAlteracao;
 	}
 
     public function getCdPropostaLicenca()
@@ -169,6 +173,20 @@ class mPropostaLicencaAmb{
     public function setVlDesconto($vlDesconto)
     {
         $this->vlDesconto = $vlDesconto;
+
+        return $this;
+    }
+
+    public function setNrProtocolo($nrProtocolo)
+    {
+        $this->nrProtocolo = $nrProtocolo;
+
+        return $this;
+    }
+
+    public function setNrAlteracao($nrAlteracao)
+    {
+        $this->nrAlteracao = $nrAlteracao;
 
         return $this;
     }

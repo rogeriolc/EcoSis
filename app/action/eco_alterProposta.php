@@ -13,6 +13,9 @@ $fechar 			= $_POST['fechar'];
 $aprovacaoCliente	= $_POST['aprovacao_cliente'];
 $status				= ($aprovacaoCliente == 'true') ? 'A' : 'E';
 $valor				= $_POST['vl_proposta'];
+$nrProtocolo		= $_POST['nr_protocolo'];
+$nrAlteracao		= $_POST['nr_alteracao'];
+$valor				= $_POST['vl_proposta'];
 
 $notificacao 		= new Notificacao();
 $cdEmpresa 			= $_SESSION['cdEmpresa'];
@@ -25,6 +28,9 @@ $propostaAtual		= $propostaAtual[0];
 $clientesAtuais		= cProposta::getClientesByProposta($cdProposta);
 $atividadesAtuais	= cProposta::getItensProposta($cdProposta);
 
+$proposta->setNrProtocolo($propostaAtual->nr_protocolo);
+$proposta->setNrAlteracao($propostaAtual->nr_alteracao);
+
 if ($propostaAtual->tp_status == 'C' || $propostaAtual->tp_status == 'F') {
 	//abre a proposta
 	$proposta->abrir();
@@ -34,6 +40,11 @@ if ($propostaAtual->tp_status == 'C' || $propostaAtual->tp_status == 'F') {
 	$cdPropostaDestino = $proposta->guardarVersao();
 
 	$proposta->copiarClientes($cdPropostaOrigem, $cdPropostaDestino);
+}
+
+if ($nrProtocolo != $propostaAtual->nr_protocolo || $nrAlteracao != $propostaAtual->nr_alteracao) {
+	$proposta->setNrProtocolo($nrProtocolo);
+	$proposta->setNrAlteracao($nrAlteracao);
 }
 
 //atualiza os dados gerais da proposta
