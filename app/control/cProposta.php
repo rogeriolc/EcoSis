@@ -45,19 +45,24 @@ class cProposta extends mPropostaLicencaAmb
     {
         $mysql = MysqlConexao::getInstance();
 
-        $nrProtocolo     = self::getMaxNrProtocolo();
-        $nrAlteracao     = self::getMaxNrAlteracao();
+        $nrProtocolo = $this->nrProtocolo;
+        $nrAlteracao = $this->nrAlteracao;
 
-        if (is_null($nrProtocolo)) {
-            $nrProtocolo = 1;
-        } else {
-            $nrProtocolo++;
-        }
-
-        if ($nrAlteracao == 0) {
-            $nrAlteracao = 0;
-        } else {
-            $nrAlteracao++;
+        if (empty($nrProtocolo) && empty($nrAlteracao)) {
+            $nrProtocolo     = self::getMaxNrProtocolo();
+            $nrAlteracao     = self::getMaxNrAlteracao();
+    
+            if (is_null($nrProtocolo)) {
+                $nrProtocolo = 1;
+            } else {
+                $nrProtocolo++;
+            }
+    
+            if ($nrAlteracao == 0) {
+                $nrAlteracao = 0;
+            } else {
+                $nrAlteracao++;
+            }
         }
 
         $competencia  = date("Y");

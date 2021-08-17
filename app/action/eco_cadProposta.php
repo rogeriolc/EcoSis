@@ -13,6 +13,8 @@ cSeguranca::validaSessao();
 $clientes 			= $_POST["clientes"];
 $dtPrevConclusao 	= implode("-",array_reverse(explode("/",$_POST['dt_prev_entrega'])));
 $dsObservacao 		= $_POST['ds_observacao'];
+$nrProtocolo		= $_POST['nr_protocolo'];
+$nrAlteracao		= $_POST['nr_alteracao'];
 $fechar 			= $_POST['fechar'];
 $aprovacaoCliente	= $_POST['aprovacao_cliente'];
 $status				= ($aprovacaoCliente == 'true') ? 'A' : 'E';
@@ -27,6 +29,9 @@ $cdEmpresa 			= $_SESSION['cdEmpresa'];
 /************************/
 
 $proposta = new cProposta(null, $status, $_POST['vl_proposta'], $dtPrevConclusao, $dsObservacao);
+
+$proposta->setNrProtocolo($nrProtocolo);
+$proposta->setNrAlteracao($nrAlteracao);
 
 $cdProposta = $proposta->cadastrar();
 
