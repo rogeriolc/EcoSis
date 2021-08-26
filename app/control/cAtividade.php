@@ -1515,7 +1515,7 @@ class cAtividade extends mAtividade
 				return $stmt->fetchAll(PDO::FETCH_OBJ);
 
 			} else {
-				return [];
+				return array();
 			}
 
 		}else{
