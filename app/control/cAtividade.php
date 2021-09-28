@@ -684,6 +684,8 @@ class cAtividade extends mAtividade
 					$file = json_decode($reg->file_data, true);
 					$fileId = ($file['id']) ? $file['id'] : null;
 
+					$fileLink = $fileId ? '<a href="javascript:void(0)" onclick="openFile(\''. base64_encode($fileId) .'\')">'.$reg->ds_anexo.'</a>' : '<a href="repo/eco/protocoloAnexo/'.$this->cdItAtividade.'/'.$reg->ds_anexo.'" target="_blank">'.$reg->ds_anexo.'</a>';
+
 					echo '
 					<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
 					<div class="info-box">
@@ -692,7 +694,7 @@ class cAtividade extends mAtividade
 					</div>
 					<div class="content">
 					<div class="text">
-					<a href="javascript:void(0)" onclick="openFile(\''. base64_encode($fileId) .'\')">'.$reg->ds_anexo.'</a>
+					'.$fileLink.'
 					<br/>
 					<a href="javascript:void(0)" onclick="excluirAnexo(\''. base64_encode($fileId) .'\', \''.base64_encode($reg->cd_it_atividade_doc).'\')">
 					<i class="material-icons col-red">delete</i>
@@ -1837,7 +1839,7 @@ class cAtividade extends mAtividade
 
 		$mysql = MysqlConexao::getInstance();
 
-		$sql = "SELECT cd_doc_assessoria, da.cd_it_atividade, ds_documento, dt_emissao, dt_validade, ds_anexo, file_data, da.dh_registro, nm_usuario, da.file_data
+		$sql = "SELECT cd_doc_assessoria, da.cd_it_atividade, a.cd_atividade, ds_documento, dt_emissao, dt_validade, ds_anexo, file_data, da.dh_registro, nm_usuario, da.file_data
 		FROM eco_doc_assessoria da, g_usuario u, eco_it_atividade ia, eco_atividade a
 		WHERE da.cd_usuario_registro = u.cd_usuario
 		AND ia.cd_it_atividade = da.cd_it_atividade

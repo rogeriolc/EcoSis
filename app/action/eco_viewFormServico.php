@@ -542,10 +542,12 @@ $documentosServico = cServico::getDocumentosServico(null, $cdServico);
 											@$fileInfo = $dropbox->get($fileData->id);
 											@$link = $fileInfo->link;
 
+											$fileLink = $link ? $link : 'repo/eco/assessoria/'.$produto->cd_it_atividade.'/'.$produto->cd_doc_assessoria.'/'.$produto->ds_anexo;
+
 											echo '
 											<tr>
 											<td>
-											<a href="'.$link.'" target="_blank">
+											<a href="'.$fileLink.'" target="_blank">
 											<i class="material-icons">insert_drive_file</i>
 											<br>
 											'.$produto->ds_anexo.'

@@ -512,6 +512,8 @@ class cServico extends mServico {
 					$file = json_decode($reg->file_data, true);
 					$fileId = ($file['id']) ? $file['id'] : null;
 
+					$fileLink = $fileId ? '<a href="javascript:void(0)" onclick="openFile(\''. base64_encode($fileId) .'\')">'.$reg->ds_anexo.'</a>' : '<a href="repo/eco/servDoc/'.$this->cdServico.'/'.$reg->cd_doc_servico.'/'.$reg->ds_anexo.'" target="_blank">'.$reg->ds_anexo.'</a>';
+
 					echo '
 					<tr>
 						<td class="text-center">
@@ -523,7 +525,7 @@ class cServico extends mServico {
 						<td>'.date('d/m/Y H:i:s', strtotime($reg->dh_registro)).'</td>
 						<td>'.$reg->nm_usuario.'</td>
 						<td>
-							<a href="javascript:void(0)" onclick="openFile(\''. base64_encode($fileId) .'\')">'.$reg->ds_anexo.'</a>
+							'.$fileLink.'
 						</td>
 						<td class="text-center">
 							<ul class="list-unstyled">

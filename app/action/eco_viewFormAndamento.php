@@ -212,7 +212,7 @@ switch ($tpStatus) {
 			<div role="tabpanel" class="tab-pane" id="listAnexoAndamento">
 				<div class="container-fluid">
 					<div class="row">
-						<?php $atv->renderAnexos(); ?>
+						<?php $atv->ListarAnexos(); ?>
 					</div>
 				</div>
 			</div>
