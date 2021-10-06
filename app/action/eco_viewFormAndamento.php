@@ -213,6 +213,7 @@ switch ($tpStatus) {
 				<div class="container-fluid">
 					<div class="row">
 						<?php $atv->ListarAnexos(); ?>
+						<?php $atv->renderAnexos(); ?>
 					</div>
 				</div>
 			</div>
