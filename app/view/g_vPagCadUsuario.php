@@ -220,6 +220,15 @@ $pUsuario  		= new cPerfilUsuario;
 								</div>
 								<div class="clearfix">
 
+								<div class="col-sm-6">
+									<div class="form-group">
+										<div class="form-line">
+											<label>Senha:</label>
+											<input type="password" name="dsSenha" class="form-control">
+										</div>
+									</div>
+								</div>
+
 								</div>
 								<div class="col-sm-6">
 									<div class="form-group">

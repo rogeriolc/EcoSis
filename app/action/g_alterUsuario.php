@@ -20,6 +20,7 @@ $autorizado 		= cPermissao::validarPermissao($cdPermissao);
 $cdUsuario 			= $_POST['cdUsuario'];
 $nome 				= strtoupper($_POST['nmUsuario']);
 $login 				= strtoupper($_POST['username']);
+$dsSenha			= base64_decode($_POST['dsSenha']);
 $dsEmail 			= strtoupper($_POST['dsEmail']);
 $snAtivo 			= strtoupper($_POST['snAtivo']);
 $cdEmpresa 			= $_SESSION['cdEmpresa'];
@@ -42,7 +43,7 @@ if(count($cdPapel) == 0){
 }
 
 
-$usuario 		= new cUsuario($cdUsuario, $nome, $login, null, $snAtivo, $dsEmail, $cdEmpresa);
+$usuario 		= new cUsuario($cdUsuario, $nome, $login, $dsSenha, $snAtivo, $dsEmail, $cdEmpresa);
 $usuario->setCdPerfilUsuario($cdPerfilUsuario);
 
 $snUsuarioExistente = $usuario->returnCdUsuario($cdUsuario);

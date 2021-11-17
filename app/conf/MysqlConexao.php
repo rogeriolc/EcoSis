@@ -14,7 +14,9 @@ class MysqlConexao extends PDO {
             try {
                 // self::$instancia = new MysqlConexao("mysql:host=localhost;dbname=boeckman_ecosis_sml;charset=utf8", "boeckman_heytor", base64_decode("MzI1Njk4NzQxRG90QA=="));
                 // self::$instancia = new MysqlConexao("mysql:host=mysql.calango.eng.br;dbname=calango01;charset=utf8", "calango01", "calango2019");
-                self::$instancia = new MysqlConexao("mysql:host=localhost;dbname=calango01;charset=utf8", "root", "");
+                // self::$instancia = new MysqlConexao("mysql:host=localhost;dbname=calangoe_calango01;charset=utf8", "calangoe_calango01", "CalM310@mb13nt3");
+                // Base teste
+                self::$instancia = new MysqlConexao("mysql:host=localhost;dbname=calangoe_calango02;charset=utf8", "calangoe", "Wt5Y-TnC072t.c");
             } catch ( Exception $e ) {
                 echo 'Erro ao conectar o mysql';
                 exit ();

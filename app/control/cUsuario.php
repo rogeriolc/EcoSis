@@ -18,6 +18,7 @@ class cUsuario extends mUsuario {
                 $_SESSION['cdUsuario']  = $reg->cd_usuario;
                 $_SESSION['login']      = $reg->login;
                 $_SESSION['nmUsuario']  = $reg->nm_usuario;
+                $_SESSION['dsSenha']    = $reg ->ds_senha;
                 $_SESSION['dsEmail']    = $reg->email;
             }else{
 
@@ -225,11 +226,12 @@ class cUsuario extends mUsuario {
     public function alterUsuario(){
         $mysql = MysqlConexao::getInstance();
 
-        $sql = "UPDATE g_usuario SET nm_usuario = UPPER(:nmPessoa), login = UPPER(:login), email = UPPER(:dsEmail), cd_perfil_usuario = :cdPerfilUsuario, sn_ativo = UPPER(:snAtivo) WHERE cd_usuario = :cdUsuario";
+        $sql = "UPDATE g_usuario SET nm_usuario = UPPER(:nmPessoa), login = UPPER(:login), ds_senha = :dsSenha, email = UPPER(:dsEmail), cd_perfil_usuario = :cdPerfilUsuario, sn_ativo = UPPER(:snAtivo) WHERE cd_usuario = :cdUsuario";
         $stmt = $mysql->prepare($sql);
         $stmt->bindParam(":cdUsuario", $this->cdUsuario);
         $stmt->bindParam(":nmPessoa", $this->nmPessoa);
         $stmt->bindParam(":login", $this->login);
+        $stmt->bindParam(":dsSenha", $this->dsSenha);
         $stmt->bindParam(":dsEmail", $this->dsEmail);
         $stmt->bindParam(":cdPerfilUsuario", $this->cdPerfilUsuario);
         $stmt->bindParam(":snAtivo", $this->snAtivo);
